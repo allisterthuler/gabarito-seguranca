@@ -140,7 +140,7 @@ form.addEventListener("submit", async (e) => {
                 .getPublicUrl(nomeArquivo);
 
         const { error: insertError } =
-            await supabase
+            await supabaseClient
                 .from("avaliacoes")
                 .insert([
                     {
