@@ -112,13 +112,13 @@ form.addEventListener("submit", async (e) => {
 
         const respostas = {};
 
-        for (let i = 0; i < perguntas.length; i++) {
+for (let i = 0; i < perguntas.length; i++) {
 
-            respostas[`q${i + 1}`] =
-                document.querySelector(
-                    `input[name="pergunta_${i}"]:checked`
-                ).value;
-        }
+    respostas[`q${i + 1}`] =
+        document.querySelector(
+            `input[name="pergunta_${i}"]:checked`
+        ).value;
+}
 
         const foto = fotoInput.files[0];
 
