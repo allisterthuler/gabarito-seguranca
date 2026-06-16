@@ -1,122 +1,30 @@
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family: Arial, sans-serif;
+body {
+    font-family: Arial;
+    background: #0F3787;
+    color: white;
+    margin: 0;
 }
 
-body{
-    background:#0F3787;
-    color:white;
-    min-height:100vh;
-    padding:20px;
+.container {
+    padding: 20px;
 }
 
-.container{
-    max-width:600px;
-    margin:0 auto;
+input, select, textarea {
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
 }
 
-h1{
-    text-align:center;
-    margin-bottom:30px;
-    font-size:32px;
-    font-weight:bold;
-    line-height:1.2;
+button {
+    width: 100%;
+    padding: 15px;
+    background: white;
+    color: #0F3787;
+    font-weight: bold;
 }
 
-.campo{
-    margin-bottom:20px;
-}
-
-label{
-    display:block;
-    margin-bottom:8px;
-    font-size:16px;
-    font-weight:bold;
-}
-
-input,
-select,
-textarea{
-    width:100%;
-    padding:14px;
-    border:none;
-    border-radius:10px;
-    font-size:16px;
-    background:white;
-    color:black;
-}
-
-textarea{
-    resize:vertical;
-}
-
-.pergunta{
-    background:rgba(255,255,255,0.10);
-    padding:15px;
-    border-radius:12px;
-    margin-bottom:15px;
-}
-
-.pergunta p{
-    margin-bottom:12px;
-    line-height:1.4;
-    font-size:15px;
-}
-
-.opcoes{
-    display:flex;
-    gap:25px;
-}
-
-.opcoes label{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    margin:0;
-    font-weight:normal;
-}
-
-.opcoes input{
-    width:auto;
-}
-
-button{
-    width:100%;
-    background:white;
-    color:#0F3787;
-    border:none;
-    border-radius:12px;
-    padding:16px;
-    font-size:18px;
-    font-weight:bold;
-    cursor:pointer;
-    margin-top:20px;
-}
-
-button:active{
-    transform:scale(0.98);
-}
-
-.oculto{
-    display:none;
-}
-
-@media (max-width:480px){
-
-    body{
-        padding:15px;
-    }
-
-    h1{
-        font-size:28px;
-    }
-
-    input,
-    select,
-    textarea{
-        font-size:16px;
-    }
-
+.pergunta {
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    margin: 10px 0;
 }

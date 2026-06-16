@@ -1,187 +1,137 @@
-console.log("QUESTIONARIO SELECT:", document.getElementById("questionario"));
+const SUPABASE_URL = "https://ibhicdhnhpgoejrdctnp.supabase.co";
+const SUPABASE_ANON_KEY = "SUA_CHAVE_AQUI";
+
+const supabase = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+);
+
+// 📦 BANCO DE PERGUNTAS (JSON LIMPO)
 const QUESTIONARIOS = {
     GSL: [
-        "O funcionário manuseia os produtos corretamente?",
-        "O funcionário mantém a postura correta durante as atividades?",
-        "Se necessário realiza trabalho em locais altos de maneira segura?",
-        "O funcionário utiliza as ferramentas adequadas para realizar seu trabalho?",
-        "Utiliza todos os EPIs (Luvas, cinta, óculos e bota)?",
-        "Manuseia a paleteira e o carrinho corretamente?",
-        "O funcionário mantém a distância de segurança da empilhadeira?",
-        "O funcionário acessa de forma segura o estoque da loja?"
+        "Manuseia produtos corretamente?",
+        "Mantém postura correta?",
+        "Trabalha em altura com segurança?",
+        "Usa ferramentas adequadas?",
+        "Usa EPIs corretamente?"
     ],
 
-    GSR_CARRO: [
-        "Respeitou a preferência no cruzamento e reduziu a velocidade?",
-        "Manteve a distância de segurança do veículo da frente?",
-        "Sinalizou e fez todas as conversões corretamente?",
-        "Realizou ultrapassagens corretamente?",
-        "Transportou todo material no porta-malas?",
-        "Todos os passageiros usavam cinto de segurança?",
-        "Respeitou a sinalização de trânsito?",
-        "Não usou celular enquanto dirigia?",
-        "Estacionou de maneira adequada?",
-        "Condições do veículo com problemas?"
+    CARRO: [
+        "Respeita sinalização?",
+        "Mantém distância segura?",
+        "Usa cinto?",
+        "Usa celular ao dirigir?",
+        "Estaciona corretamente?"
     ],
 
-    GSR_MOTO: [
-        "Manteve correto posicionamento na via?",
-        "Respeitou preferência nos cruzamentos?",
-        "Manteve distância de segurança?",
-        "Sinalizou corretamente?",
-        "Velocidade adequada em cruzamentos?",
-        "Usou todos os EPIs?",
-        "Transportou material com segurança?",
-        "Postura correta na moto?",
-        "Estacionou corretamente?",
-        "Não usou celular ao caminhar/dirigir?",
-        "Respeitou sinalização?",
-        "Condições do veículo com problemas?"
+    MOTO: [
+        "Posicionamento correto?",
+        "Usa EPIs?",
+        "Sinaliza corretamente?",
+        "Respeita velocidade?",
+        "Mantém distância segura?"
     ],
 
-    GSR_APE: [
-        "Caminhou sem usar celular?",
-        "Usou EPIs corretamente?",
-        "Usou faixa de pedestres?",
-        "Evitou carregar peso excessivo?",
-        "Calçadas estavam em boas condições?",
-        "Havia faixa de pedestres no trajeto?"
+    APE: [
+        "Usa faixa de pedestre?",
+        "Evita celular ao caminhar?",
+        "Usa EPIs?",
+        "Ambiente seguro?"
     ]
 };
-questionarioSelect.addEventListener("change", () => {
 
-    const questionario = questionarioSelect.value;
+// 📌 ELEMENTOS
+const form = document.getElementById("form");
+const select = document.getElementById("questionario");
+const perguntasDiv = document.getElementById("perguntas");
+const placa = document.getElementById("placa");
 
-    perguntasContainer.innerHTML = "";
+// 📌 MOSTRAR PERGUNTAS
+select.addEventListener("change", () => {
 
-    if (!questionario) return;
+    const tipo = select.value;
+    perguntasDiv.innerHTML = "";
 
-    const perguntas = Array.from(document.querySelectorAll("#perguntasContainer .pergunta p"))
-    .map(p => p.textContent.replace(/^\d+\.\s/, ""));
+    if (!tipo) return;
 
-    if (!perguntas) {
-        console.log("Questionário não encontrado:", questionario);
-        return;
+    const perguntas = QUESTIONARIOS[tipo];
+
+    if (tipo === "CARRO" || tipo === "MOTO") {
+        placa.style.display = "block";
+    } else {
+        placa.style.display = "none";
     }
 
-    perguntas.forEach((textoPergunta, index) => {
+    perguntas.forEach((p, i) => {
 
-        const perguntaDiv = document.createElement("div");
-        perguntaDiv.className = "pergunta";
+        const div = document.createElement("div");
+        div.className = "pergunta";
 
-        perguntaDiv.innerHTML = `
-            <p>${index + 1}. ${textoPergunta}</p>
+        div.innerHTML = `
+            <p>${p}</p>
 
-            <div class="opcoes">
-
-                <label>
-                    <input type="radio" name="pergunta_${index}" value="Sim" required>
-                    Sim
-                </label>
-
-                <label>
-                    <input type="radio" name="pergunta_${index}" value="Não" required>
-                    Não
-                </label>
-
-            </div>
+            <label><input type="radio" name="q${i}" value="Sim" required> Sim</label>
+            <label><input type="radio" name="q${i}" value="Não" required> Não</label>
         `;
 
-        perguntasContainer.appendChild(perguntaDiv);
+        perguntasDiv.appendChild(div);
     });
-
 });
+
+// 📌 SUBMIT
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const questionario = questionarioSelect.value;
+    const tipo = select.value;
+    const perguntas = QUESTIONARIOS[tipo];
 
-    if (!questionario) {
-        alert("Selecione um questionário.");
-        return;
-    }
+    if (!tipo) return;
 
-    const perguntas = QUESTIONARIOS[questionario];
+    // valida respostas
+    const respostas = perguntas.map((p, i) => {
+        return {
+            pergunta: p,
+            resposta: document.querySelector(`input[name="q${i}"]:checked`).value
+        };
+    });
 
-    // valida perguntas
-    for (let i = 0; i < perguntas.length; i++) {
-        const resposta = document.querySelector(
-            `input[name="pergunta_${i}"]:checked`
-        );
+    // upload foto
+    const foto = document.getElementById("foto").files[0];
+    const nome = Date.now() + "_" + foto.name;
 
-        if (!resposta) {
-            alert(`Responda a pergunta ${i + 1}.`);
-            return;
-        }
-    }
+    await supabase.storage
+        .from("evidencias")
+        .upload(nome, foto);
 
-    const fotoInput = document.getElementById("foto");
+    const { data } = supabase.storage
+        .from("evidencias")
+        .getPublicUrl(nome);
 
-    if (fotoInput.files.length === 0) {
-        alert("Anexe uma foto.");
-        return;
-    }
+    // salvar avaliação
+    const { data: av } = await supabase
+        .from("avaliacoes")
+        .insert([{
+            id_avaliador: document.getElementById("idAvaliador").value,
+            id_funcionario: document.getElementById("idFuncionario").value,
+            questionario: tipo,
+            placa: document.getElementById("placa").value,
+            comentarios: document.getElementById("comentarios").value,
+            foto_url: data.publicUrl
+        }])
+        .select()
+        .single();
 
-    try {
+    // salvar respostas
+    await supabase.from("avaliacao_respostas").insert(
+        respostas.map(r => ({
+            avaliacao_id: av.id,
+            pergunta: r.pergunta,
+            resposta: r.resposta
+        }))
+    );
 
-        // 📸 UPLOAD FOTO
-        const foto = fotoInput.files[0];
-        const nomeArquivo = `${Date.now()}_${foto.name}`;
+    alert("Enviado com sucesso!");
 
-        const { error: uploadError } = await supabaseClient
-            .storage
-            .from("evidencias")
-            .upload(nomeArquivo, foto);
-
-        if (uploadError) throw uploadError;
-
-        const { data: fotoPublica } = supabaseClient
-            .storage
-            .from("evidencias")
-            .getPublicUrl(nomeArquivo);
-
-        // 📋 1. CRIA AVALIAÇÃO (CABEÇALHO)
-        const { data: avaliacao, error: erroAvaliacao } = await supabaseClient
-            .from("avaliacoes")
-            .insert([{
-                id_avaliador: document.getElementById("idAvaliador").value,
-                id_funcionario: document.getElementById("idFuncionario").value,
-                questionario: questionario,
-                placa: document.getElementById("placa").value,
-                comentarios: document.getElementById("comentarios").value,
-                foto_url: fotoPublica.publicUrl
-            }])
-            .select()
-            .single();
-
-        if (erroAvaliacao) throw erroAvaliacao;
-
-        // 2. SALVA RESPOSTAS (NOVO MODELO)
-        const respostasInsert = perguntas.map((pergunta, index) => {
-            return {
-                avaliacao_id: avaliacao.id,
-                pergunta: pergunta,
-                resposta: document.querySelector(
-                    `input[name="pergunta_${index}"]:checked`
-                ).value
-            };
-        });
-
-        const { error: erroRespostas } = await supabaseClient
-            .from("avaliacao_respostas")
-            .insert(respostasInsert);
-
-        if (erroRespostas) throw erroRespostas;
-
-        // 🎉 SUCESSO
-        alert("Avaliação enviada com sucesso!");
-
-        form.reset();
-        perguntasContainer.innerHTML = "";
-        placaContainer.classList.add("oculto");
-
-    } catch (erro) {
-        console.error("ERRO:", erro);
-        alert("Erro ao enviar. Veja o console.");
-    }
+    form.reset();
+    perguntasDiv.innerHTML = "";
 });
