@@ -1,3 +1,4 @@
+console.log("QUESTIONARIO SELECT:", document.getElementById("questionario"));
 const QUESTIONARIOS = {
     GSL: [
         "O funcionário manuseia os produtos corretamente?",
