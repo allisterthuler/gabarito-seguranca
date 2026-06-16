@@ -1,3 +1,52 @@
+const QUESTIONARIOS = {
+    GSL: [
+        "O funcionário manuseia os produtos corretamente?",
+        "O funcionário mantém a postura correta durante as atividades?",
+        "Se necessário realiza trabalho em locais altos de maneira segura?",
+        "O funcionário utiliza as ferramentas adequadas para realizar seu trabalho?",
+        "Utiliza todos os EPIs (Luvas, cinta, óculos e bota)?",
+        "Manuseia a paleteira e o carrinho corretamente?",
+        "O funcionário mantém a distância de segurança da empilhadeira?",
+        "O funcionário acessa de forma segura o estoque da loja?"
+    ],
+
+    GSR_CARRO: [
+        "Respeitou a preferência no cruzamento e reduziu a velocidade?",
+        "Manteve a distância de segurança do veículo da frente?",
+        "Sinalizou e fez todas as conversões corretamente?",
+        "Realizou ultrapassagens corretamente?",
+        "Transportou todo material no porta-malas?",
+        "Todos os passageiros usavam cinto de segurança?",
+        "Respeitou a sinalização de trânsito?",
+        "Não usou celular enquanto dirigia?",
+        "Estacionou de maneira adequada?",
+        "Condições do veículo com problemas?"
+    ],
+
+    GSR_MOTO: [
+        "Manteve correto posicionamento na via?",
+        "Respeitou preferência nos cruzamentos?",
+        "Manteve distância de segurança?",
+        "Sinalizou corretamente?",
+        "Velocidade adequada em cruzamentos?",
+        "Usou todos os EPIs?",
+        "Transportou material com segurança?",
+        "Postura correta na moto?",
+        "Estacionou corretamente?",
+        "Não usou celular ao caminhar/dirigir?",
+        "Respeitou sinalização?",
+        "Condições do veículo com problemas?"
+    ],
+
+    GSR_APE: [
+        "Caminhou sem usar celular?",
+        "Usou EPIs corretamente?",
+        "Usou faixa de pedestres?",
+        "Evitou carregar peso excessivo?",
+        "Calçadas estavam em boas condições?",
+        "Havia faixa de pedestres no trajeto?"
+    ]
+};
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
