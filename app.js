@@ -147,33 +147,6 @@ document.addEventListener("DOMContentLoaded", () => {
             };
         });
 
-        // foto
-        const foto = document.getElementById("foto").files[0];
-
-        if (!foto) {
-            alert("Anexe uma foto.");
-            return;
-        }
-
-        const nome = Date.now() + "_" + foto.name;
-
-        // upload
-        const { error: uploadError } = await supabase
-            .storage
-            .from("evidencias")
-            .upload(nome, foto);
-
-        if (uploadError) {
-            alert("Erro no upload");
-            console.error(uploadError);
-            return;
-        }
-
-        const { data } = supabase
-            .storage
-            .from("evidencias")
-            .getPublicUrl(nome);
-
         // salvar avaliação
         const { data: avaliacao, error: insertError } = await supabase
             .from("avaliacoes")
