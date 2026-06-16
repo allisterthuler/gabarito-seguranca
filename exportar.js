@@ -10,7 +10,7 @@ export default async function handler(req, res) {
 
     const { senha } = req.body;
 
-    if(senha !== process.env.EXPORT_PASSWORD){
+    if(senha !== "Friburgo@1818"){
         return res.status(401).json({
             erro:"Senha inválida"
         });
