@@ -3,43 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gabarito de Segurança</title>
+    <title>Ambev - Gabritos de Segurança</title>
 
     <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-<div class="container">
+    <div class="container">
 
-    <h1>Ambev - Gabarito de Segurança</h1>
+        <h1>AMBEV</h1>
+        <h2>Gabritos de Segurança</h2>
 
-    <form id="form">
+        <form id="avaliacaoForm">
 
-        <input id="idAvaliador" placeholder="ID Avaliador" required>
-        <input id="idFuncionario" placeholder="ID Funcionário" required>
+            <div class="campo">
+                <label>ID Avaliador *</label>
+                <input
+                    type="text"
+                    id="idAvaliador"
+                    maxlength="10"
+                    required
+                >
+            </div>
 
-        <select id="questionario" required>
-            <option value="">Selecione</option>
-            <option value="GSL">GSL</option>
-            <option value="CARRO">CARRO</option>
-            <option value="MOTO">MOTO</option>
-            <option value="APE">A PÉ</option>
-        </select>
+            <div class="campo">
+                <label>ID Avaliado *</label>
+                <input
+                    type="text"
+                    id="idAvaliado"
+                    maxlength="10"
+                    required
+                >
+            </div>
 
-        <div id="perguntas"></div>
+            <div class="campo">
+                <label>Tipo de Avaliação *</label>
 
-        <input id="placa" placeholder="Placa (se aplicável)">
+                <select id="tipoAvaliacao" required>
+                    <option value="">Selecione</option>
+                    <option value="GSL">GSL</option>
+                    <option value="GSR_CARRO">GSR Carro</option>
+                    <option value="GSR_MOTO">GSR Moto</option>
+                    <option value="GSR_PE">GSR A Pé</option>
+                </select>
+            </div>
 
-        <textarea id="comentarios" placeholder="Comentários"></textarea>
- 
-        <button type="submit">Enviar</button>
+            <div
+                id="placaContainer"
+                class="campo oculto"
+            >
+                <label id="placaLabel"></label>
 
-    </form>
+                <input
+                    type="text"
+                    id="placaVeiculo"
+                    maxlength="10"
+                >
+            </div>
 
-</div>
+            <div id="perguntasContainer"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js"></script>
+            <div class="campo">
+                <label>Comentários</label>
+
+                <textarea
+                    id="comentario"
+                    rows="4"
+                ></textarea>
+            </div>
+
+            <button
+                type="submit"
+                id="btnEnviar"
+            >
+                Enviar Avaliação
+            </button>
+
+        </form>
+
+        <div id="mensagem"></div>
+
+    </div>
+
+    <script src="app.js"></script>
 
 </body>
 </html>

@@ -1,193 +1,270 @@
-document.addEventListener("DOMContentLoaded", () => {
+const SUPABASE_URL = "https://ibhicdhnhpgoejrdctnp.supabase.co";
+const SUPABASE_KEY = "sb_publishable_J1UhgQqfBIP-MQ2OiwFaNg_J7aLGPtC";
 
-    // =========================
-    // 🔌 SUPABASE
-    // =========================
-    const SUPABASE_URL = "https://ibhicdhnhpgoejrdctnp.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_J1UhgQqfBIP-MQ2OiwFaNg_J7aLGPtC";
+const supabaseClient = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
 
-    const supabase = window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY
-    );
+const perguntas = {
+    GSL: [
+        "Manuseia os produtos corretamente?",
+        "Mantém a postura correta durante as atividades?",
+        "Se necessário realiza trabalho em locais altos de maneira segura?",
+        "Utiliza as ferramentas adequadas para realizar seu trabalho?",
+        "Utiliza todos os EPIs (Luvas, cinta, óculos e bota)?",
+        "Manuseia a paleteira e o carrinho corretamente?",
+        "Mantém a distância de segurança da empilhadeira?",
+        "Acessa de forma segura o estoque da loja?"
+    ],
 
-    // =========================
-    // 📦 QUESTIONÁRIOS (JSON)
-    // =========================
-    const QUESTIONARIOS = {
-        GSL: [
-            "Manuseia produtos corretamente?",
-            "Mantém a postura correta durante as atividades?",
-	    "Se necessário realiza trabalho em locais altos de maneira segura?",
-	    "O funcionário utiliza as ferramentas adequadas para realizar seu trabalho?",
-            "Usa todos os EPIs corretamente?",
-	    "Manuseia a paleteira e o carrinho corretamente?",
-	    "Mantém a distância de segurança da empilhadeira?",
-            "Acessa de forma segura o estoque da loja?"
-        ],
+    GSR_CARRO: [
+        "Respeitou a preferência no cruzamento e reduziu a velocidade?",
+        "Manteve a distância de segurança do veículo da frente?",
+        "Sinalizou e fez todas as conversões corretamente?",
+        "Realizou as ultrapassagens corretamente?",
+        "Transportou todo material dentro do porta malas?",
+        "Todos os passageiros utilizavam cinto de segurança?",
+        "Respeitou a sinalização de trânsito?",
+        "Manteve a concentração na direção sem uso de celular enquanto dirigia?",
+        "Estacionou de maneira adequada?"
+    ],
 
-        CARRO: [
-            "Respeitou a preferência no cruzamento e reduziu a velocidade?",
-            "Manteve a distância de segurança do veículo da frente?",
-            "Sinalizou e fez todas as conversões corretamente?",
-            "Realizou as ultrapassagens corretamente?",
-	    "Transportou todo material dentro do porta malas?",
-            "Todos os passageiros utilizavam cinto de segurança?",
-            "Respeitou a sinalização de trânsito?",
-            "Manteve a concentração na direção sem uso de celular enquanto dirigia?",
-            "Estacionou de maneira adequada?"
-        ],
+    GSR_MOTO: [
+        "Manteve o correto posicionamento na via?",
+        "Respeitou a preferência e reduziu a velocidade nos cruzamentos?",
+        "Manteve a distância de segurança dos veículos?",
+        "Sinalizou e fez todas as conversões corretamente?",
+        "Saiu com velocidade adequada e cruzamento e semáforos?",
+        "Utilizou todos os EPIs durante a execução das atividades?",
+        "Transportou material de maneira segura?",
+        "Mantém a postura correta na moto?",
+        "Estacionou de maneira adequada?",
+        "Caminhou sem falar ou digitar no celular?",
+        "Respeitou a preferência no cruzamento e reduziu a velocidade?"
+    ],
 
-        MOTO: [
-            "Manteve o correto posicionamento na via?",
-            "Respeitou a preferência e reduziu a velocidade nos cruzamentos?",
-            "Manteve a distância de segurança dos veículos?",
-            "Sinalizou e fez todas a conversões corretamente?",
-            "Saiu com velocidade adequada e cruzamento e semáforos?",
-            "Utilizou todos os EPIs durante a execução das atividades?",
-            "Transportou material de maneira segura?",
-            "Mantém a postura correta na moto?",
-            "Estacionou de maneira adequada?",
-            "Caminhou sem falar ou digitar no celular?",
-            "Respeitou a preferência no cruzamento e reduziu a velocidade?"
-        ],
+    GSR_PE: [
+        "Caminhou sem falar ou digitar no celular?",
+        "Utilizou todos os EPIs?",
+        "Utilizou a faixa de pedestres para atravessar a rua?",
+        "Evitou carregar peso em excesso?",
+        "O trecho percorrido era sem buracos nas calçadas?",
+        "Durante o percurso havia faixas de pedestres?"
+    ]
+};
 
-        APE: [
-            "Caminhou sem falar ou digitar no celular?",
-            "Utilizou todos os EPIs?",
-            "Utilizou a faixa de pedestres para atravessar a rua?",
-            "Evitou carregar peso em excesso?",
-            "O trecho percorrido era sem buracos nas calçadas?",
-            "Durante o percurso havia faixas de pedestres?"
-        ]
+const tipoSelect = document.getElementById("tipoAvaliacao");
+const perguntasContainer = document.getElementById("perguntasContainer");
+const placaContainer = document.getElementById("placaContainer");
+const placaLabel = document.getElementById("placaLabel");
+const mensagem = document.getElementById("mensagem");
+
+tipoSelect.addEventListener("change", carregarPerguntas);
+
+function carregarPerguntas() {
+
+    perguntasContainer.innerHTML = "";
+
+    const tipo = tipoSelect.value;
+
+    placaContainer.classList.add("oculto");
+
+    if (tipo === "GSR_CARRO") {
+        placaContainer.classList.remove("oculto");
+        placaLabel.textContent = "Placa do Veículo *";
+    }
+
+    if (tipo === "GSR_MOTO") {
+        placaContainer.classList.remove("oculto");
+        placaLabel.textContent = "Placa da Moto *";
+    }
+
+    if (!tipo) return;
+
+    perguntas[tipo].forEach((texto, index) => {
+
+        const numero = index + 1;
+
+        perguntasContainer.innerHTML += `
+            <div class="pergunta">
+
+                <div class="pergunta-titulo">
+                    ${numero}. ${texto}
+                </div>
+
+                <div class="opcoes">
+
+                    <div class="opcao">
+                        <input
+                            type="radio"
+                            id="${tipo}_${numero}_sim"
+                            name="${tipo}_${numero}"
+                            value="true"
+                        >
+                        <label for="${tipo}_${numero}_sim">
+                            Sim
+                        </label>
+                    </div>
+
+                    <div class="opcao">
+                        <input
+                            type="radio"
+                            id="${tipo}_${numero}_nao"
+                            name="${tipo}_${numero}"
+                            value="false"
+                        >
+                        <label for="${tipo}_${numero}_nao">
+                            Não
+                        </label>
+                    </div>
+
+                </div>
+
+            </div>
+        `;
+    });
+}
+
+document
+.getElementById("avaliacaoForm")
+.addEventListener("submit", salvarAvaliacao);
+
+async function salvarAvaliacao(e) {
+
+    e.preventDefault();
+
+    mensagem.innerHTML = "";
+    mensagem.className = "";
+
+    const idAvaliador =
+        document.getElementById("idAvaliador").value.trim();
+
+    const idAvaliado =
+        document.getElementById("idAvaliado").value.trim();
+
+    const tipo =
+        document.getElementById("tipoAvaliacao").value;
+
+    const placa =
+        document.getElementById("placaVeiculo").value.trim();
+
+    const comentario =
+        document.getElementById("comentario").value.trim();
+
+    if (!idAvaliador || !idAvaliado || !tipo) {
+        mostrarErro("Preencha todos os campos obrigatórios.");
+        return;
+    }
+
+    if (
+        (tipo === "GSR_CARRO" || tipo === "GSR_MOTO")
+        && !placa
+    ) {
+        mostrarErro("Informe a placa.");
+        return;
+    }
+
+    const respostas = {};
+
+    for (let i = 1; i <= perguntas[tipo].length; i++) {
+
+        const resposta = document.querySelector(
+            `input[name="${tipo}_${i}"]:checked`
+        );
+
+        if (!resposta) {
+            mostrarErro(
+                "Responda todas as perguntas."
+            );
+            return;
+        }
+
+        respostas[i] = resposta.value === "true";
+    }
+
+    const registro = {
+        id_avaliador: idAvaliador,
+        id_avaliado: idAvaliado,
+        tipo_avaliacao: tipo,
+        placa_veiculo: placa || null,
+        comentario: comentario || null
     };
 
-    // =========================
-    // 🎯 ELEMENTOS DO DOM
-    // =========================
-    const form = document.getElementById("form");
-    const select = document.getElementById("questionario");
-    const perguntasDiv = document.getElementById("perguntas");
-    const placaInput = document.getElementById("placa");
+    for(let i=1;i<=8;i++){
+        registro[`gsl_q${i}`] = null;
+    }
 
-    // =========================
-    // 📌 EVENTO: TROCAR QUESTIONÁRIO
-    // =========================
-    select.addEventListener("change", () => {
+    for(let i=1;i<=9;i++){
+        registro[`carro_q${i}`] = null;
+    }
 
-        const tipo = select.value;
+    for(let i=1;i<=11;i++){
+        registro[`moto_q${i}`] = null;
+    }
 
-        perguntasDiv.innerHTML = "";
+    for(let i=1;i<=6;i++){
+        registro[`pe_q${i}`] = null;
+    }
 
-        if (!tipo) return;
-
-        const perguntas = QUESTIONARIOS[tipo];
-
-        if (!perguntas) return;
-
-        // mostrar/ocultar placa
-        if (tipo === "CARRO" || tipo === "MOTO") {
-            placaInput.style.display = "block";
-        } else {
-            placaInput.style.display = "none";
+    if(tipo === "GSL"){
+        for(let i=1;i<=8;i++){
+            registro[`gsl_q${i}`] = respostas[i];
         }
+    }
 
-        // gerar perguntas
-        perguntas.forEach((texto, index) => {
-
-            const div = document.createElement("div");
-            div.className = "pergunta";
-
-            div.innerHTML = `
-                <p>${index + 1}. ${texto}</p>
-
-                <label>
-                    <input type="radio" name="q${index}" value="Sim" required>
-                    Sim
-                </label>
-
-                <label>
-                    <input type="radio" name="q${index}" value="Não" required>
-                    Não
-                </label>
-            `;
-
-            perguntasDiv.appendChild(div);
-        });
-    });
-
-    // =========================
-    // 📌 EVENTO: SUBMIT
-    // =========================
-    form.addEventListener("submit", async (e) => {
-
-        e.preventDefault();
-
-        const tipo = select.value;
-
-        if (!tipo) {
-            alert("Selecione um questionário.");
-            return;
+    if(tipo === "GSR_CARRO"){
+        for(let i=1;i<=9;i++){
+            registro[`carro_q${i}`] = respostas[i];
         }
+    }
 
-        const perguntas = QUESTIONARIOS[tipo];
-
-        // valida respostas
-        const respostas = perguntas.map((p, i) => {
-            const r = document.querySelector(`input[name="q${i}"]:checked`);
-
-            if (!r) {
-                alert(`Responda a pergunta ${i + 1}`);
-                throw new Error("Pergunta não respondida");
-            }
-
-            return {
-                pergunta: p,
-                resposta: r.value
-            };
-        });
-
-        // salvar avaliação
-        const { data: avaliacao, error: insertError } = await supabase
-            .from("avaliacoes")
-            .insert([{
-                id_avaliador: document.getElementById("idAvaliador").value,
-                id_funcionario: document.getElementById("idFuncionario").value,
-                questionario: tipo,
-                placa: placaInput.value,
-                comentarios: document.getElementById("comentarios").value,
-            }])
-            .select()
-            .single();
-
-        if (insertError) {
-            console.error(insertError);
-            alert("Erro ao salvar avaliação.");
-            return;
+    if(tipo === "GSR_MOTO"){
+        for(let i=1;i<=11;i++){
+            registro[`moto_q${i}`] = respostas[i];
         }
+    }
 
-        // salvar respostas
-        const respostasInsert = respostas.map(r => ({
-            avaliacao_id: avaliacao.id,
-            pergunta: r.pergunta,
-            resposta: r.resposta
-        }));
-
-        const { error: errResp } = await supabase
-            .from("avaliacao_respostas")
-            .insert(respostasInsert);
-
-        if (errResp) {
-            console.error(errResp);
-            alert("Erro ao salvar respostas.");
-            return;
+    if(tipo === "GSR_PE"){
+        for(let i=1;i<=6;i++){
+            registro[`pe_q${i}`] = respostas[i];
         }
+    }
 
-        alert("Avaliação enviada com sucesso!");
+    const { error } = await supabaseClient
+        .from("avaliacoes")
+        .insert([registro]);
 
-        form.reset();
-        perguntasDiv.innerHTML = "";
-        placaInput.style.display = "none";
-    });
+    if(error){
 
-});
+        console.error(error);
+
+        mostrarErro(
+            "Erro ao salvar avaliação."
+        );
+
+        return;
+    }
+
+    mostrarSucesso(
+        "Avaliação enviada com sucesso!"
+    );
+
+    document
+        .getElementById("avaliacaoForm")
+        .reset();
+
+    perguntasContainer.innerHTML = "";
+
+    placaContainer.classList.add("oculto");
+}
+
+function mostrarErro(texto){
+    mensagem.className = "erro";
+    mensagem.innerHTML = texto;
+}
+
+function mostrarSucesso(texto){
+    mensagem.className = "sucesso";
+    mensagem.innerHTML = texto;
+}
