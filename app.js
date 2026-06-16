@@ -156,7 +156,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 questionario: tipo,
                 placa: placaInput.value,
                 comentarios: document.getElementById("comentarios").value,
-                foto_url: data.publicUrl
             }])
             .select()
             .single();
