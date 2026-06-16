@@ -47,6 +47,49 @@ const QUESTIONARIOS = {
         "Havia faixa de pedestres no trajeto?"
     ]
 };
+questionarioSelect.addEventListener("change", () => {
+
+    const questionario = questionarioSelect.value;
+
+    perguntasContainer.innerHTML = "";
+
+    if (!questionario) return;
+
+    const perguntas = Array.from(document.querySelectorAll("#perguntasContainer .pergunta p"))
+    .map(p => p.textContent.replace(/^\d+\.\s/, ""));
+
+    if (!perguntas) {
+        console.log("Questionário não encontrado:", questionario);
+        return;
+    }
+
+    perguntas.forEach((textoPergunta, index) => {
+
+        const perguntaDiv = document.createElement("div");
+        perguntaDiv.className = "pergunta";
+
+        perguntaDiv.innerHTML = `
+            <p>${index + 1}. ${textoPergunta}</p>
+
+            <div class="opcoes">
+
+                <label>
+                    <input type="radio" name="pergunta_${index}" value="Sim" required>
+                    Sim
+                </label>
+
+                <label>
+                    <input type="radio" name="pergunta_${index}" value="Não" required>
+                    Não
+                </label>
+
+            </div>
+        `;
+
+        perguntasContainer.appendChild(perguntaDiv);
+    });
+
+});
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -112,7 +155,7 @@ form.addEventListener("submit", async (e) => {
 
         if (erroAvaliacao) throw erroAvaliacao;
 
-        // 📊 2. SALVA RESPOSTAS (NOVO MODELO)
+        // 2. SALVA RESPOSTAS (NOVO MODELO)
         const respostasInsert = perguntas.map((pergunta, index) => {
             return {
                 avaliacao_id: avaliacao.id,
