@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 🔌 SUPABASE
     // =========================
     const SUPABASE_URL = "https://ibhicdhnhpgoejrdctnp.supabase.co";
-    const SUPABASE_ANON_KEY = "SUA_CHAVE_AQUI";
+    const SUPABASE_ANON_KEY = "sb_publishable_J1UhgQqfBIP-MQ2OiwFaNg_J7aLGPtC";
 
     const supabase = window.supabase.createClient(
         SUPABASE_URL,
